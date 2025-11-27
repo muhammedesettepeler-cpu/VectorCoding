@@ -92,3 +92,4 @@ qdrant_storage/
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+.vscode/
