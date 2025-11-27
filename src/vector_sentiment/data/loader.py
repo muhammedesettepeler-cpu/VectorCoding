@@ -5,6 +5,7 @@ generators to prevent RAM overflow with large datasets.
 """
 
 from pathlib import Path
+from types import TracebackType
 from typing import Generator
 
 import pandas as pd
@@ -71,7 +72,7 @@ class ParquetDataLoader:
             Total row count
         """
         parquet_file = self._get_parquet_file()
-        return parquet_file.metadata.num_rows  # type: ignore[union-attr]
+        return int(parquet_file.metadata.num_rows)
 
     def iter_batches(self) -> Generator[pd.DataFrame, None, None]:
         """Iterate over Parquet file in batches.
@@ -174,6 +175,11 @@ class ParquetDataLoader:
         """Enter context manager."""
         return self
 
-    def __exit__(self, exc_type: type, exc_val: Exception, exc_tb: object) -> None:
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
         """Exit context manager and close file."""
         self.close()
