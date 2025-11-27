@@ -6,8 +6,12 @@ and customizable log levels. Loguru is used for its simplicity and powerful feat
 
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-from loguru import Logger, logger
+from loguru import logger
+
+if TYPE_CHECKING:
+    from loguru import Logger
 
 from vector_sentiment.config.constants import LOG_FORMAT
 
