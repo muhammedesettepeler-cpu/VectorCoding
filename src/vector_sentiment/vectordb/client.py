@@ -4,8 +4,6 @@ This module provides a wrapper around QdrantClient with health checks,
 error handling, and context manager support.
 """
 
-from typing import Optional
-
 from loguru import logger
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
@@ -36,7 +34,7 @@ class QdrantClientWrapper:
             settings: Qdrant connection settings
         """
         self.settings = settings
-        self._client: Optional[QdrantClient] = None
+        self._client: QdrantClient | None = None
 
         logger.info(
             f"Initializing Qdrant client: host={settings.host}, "
@@ -84,7 +82,7 @@ class QdrantClientWrapper:
             logger.error(f"Qdrant health check failed: {e}")
             return False
 
-    def get_collection_info(self, collection_name: str) -> Optional[models.CollectionInfo]:
+    def get_collection_info(self, collection_name: str) -> models.CollectionInfo | None:
         """Get collection information.
 
         Args:

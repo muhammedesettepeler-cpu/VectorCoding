@@ -5,7 +5,7 @@ generators to prevent RAM overflow with large datasets.
 """
 
 from pathlib import Path
-from typing import Generator, Optional
+from typing import Generator
 
 import pandas as pd
 import pyarrow.parquet as pq
@@ -50,7 +50,7 @@ class ParquetDataLoader:
 
         self.file_path = file_path
         self.batch_size = batch_size
-        self._parquet_file: Optional[pq.ParquetFile] = None
+        self._parquet_file: pq.ParquetFile | None = None
 
         logger.info(f"Initialized ParquetDataLoader for {file_path} with batch_size={batch_size}")
 

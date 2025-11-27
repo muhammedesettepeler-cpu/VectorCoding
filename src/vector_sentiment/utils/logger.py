@@ -6,7 +6,6 @@ and customizable log levels. Loguru is used for its simplicity and powerful feat
 
 import sys
 from pathlib import Path
-from typing import Optional
 
 from loguru import logger
 
@@ -15,7 +14,7 @@ from vector_sentiment.config.constants import LOG_FORMAT
 
 def setup_logging(
     level: str = "INFO",
-    log_file: Optional[Path] = None,
+    log_file: Path | None = None,
     rotation: str = "10 MB",
     retention: str = "7 days",
 ) -> None:
