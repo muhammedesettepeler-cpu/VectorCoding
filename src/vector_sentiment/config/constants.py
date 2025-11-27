@@ -63,7 +63,6 @@ STOPWORDS: Final[set[str]] = {
     "was",
     "will",
     "with",
-    "the",
     "this",
     "but",
     "they",
