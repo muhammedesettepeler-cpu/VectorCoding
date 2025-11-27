@@ -140,7 +140,7 @@ class ParquetDataLoader:
                     f"Neither '{text_field}' nor '{FIELD_SENTENCE}' found in columns: "
                     f"{list(batch_df.columns)}"
                 )
-                raise ValueError(f"Text column not found in data")
+                raise ValueError("Text column not found in data")
 
             if label_field not in batch_df.columns:
                 logger.error(f"Label column '{label_field}' not found in columns")

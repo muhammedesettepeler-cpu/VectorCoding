@@ -79,7 +79,10 @@ def main() -> None:
 
     # Upload to Qdrant
     upserter = VectorUpserter(client, collection_name)
-    payloads = [{"label": label, "text": text} for label, text in zip(sample_labels, sample_texts)]
+    payloads = [
+        {"label": label, "text": text}
+        for label, text in zip(sample_labels, sample_texts, strict=True)
+    ]
 
     upserter.upsert_batch(
         vectors=embeddings,
