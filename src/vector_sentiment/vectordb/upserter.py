@@ -6,6 +6,7 @@ with named vector format and batch processing for memory efficiency.
 IMPORTANT: This module uses client.upsert() and NOT client.add() as per requirements.
 """
 
+from collections.abc import Generator
 from typing import Any
 
 import numpy as np
@@ -146,8 +147,8 @@ class VectorUpserter:
 
     def upsert_generator(
         self,
-        vector_generator: Any,
-        payload_generator: Any,
+        vector_generator: Generator[np.ndarray | list[list[float]], None, None],
+        payload_generator: Generator[list[dict[str, Any]], None, None],
         vector_name: str,
         batch_size: int = 128,
     ) -> int:
