@@ -158,7 +158,7 @@ def ingest(
                 # Create payloads
                 payloads = [
                     {"label": str(label).lower(), "text": str(text)}
-                    for text, label in zip(texts, labels)
+                    for text, label in zip(texts, labels, strict=True)
                 ]
 
                 # Upload to Qdrant

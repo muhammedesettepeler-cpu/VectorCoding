@@ -38,11 +38,10 @@ class SentimentRecord(BaseModel):
         normalized = v.lower().strip()
         allowed_labels = {"positive", "negative", "neutral"}
 
-        if normalized not in allowed_labels:
+        if normalized not in allowed_labels and normalized in {"0", "1", "2"}:
             # Allow numeric labels (0, 1, 2) and convert them
-            if normalized in {"0", "1", "2"}:
-                label_map = {"0": "negative", "1": "neutral", "2": "positive"}
-                return label_map[normalized]
+            label_map = {"0": "negative", "1": "neutral", "2": "positive"}
+            return label_map[normalized]
             # If not in allowed set, log warning but allow it
             # This provides flexibility for different datasets
 
