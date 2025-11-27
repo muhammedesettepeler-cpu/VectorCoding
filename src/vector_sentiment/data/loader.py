@@ -71,7 +71,7 @@ class ParquetDataLoader:
             Total row count
         """
         parquet_file = self._get_parquet_file()
-        return parquet_file.metadata.num_rows
+        return parquet_file.metadata.num_rows  # type: ignore[union-attr]
 
     def iter_batches(self) -> Generator[pd.DataFrame, None, None]:
         """Iterate over Parquet file in batches.
