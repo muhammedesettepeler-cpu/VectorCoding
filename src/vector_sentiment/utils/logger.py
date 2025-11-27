@@ -7,7 +7,7 @@ and customizable log levels. Loguru is used for its simplicity and powerful feat
 import sys
 from pathlib import Path
 
-from loguru import logger
+from loguru import Logger, logger
 
 from vector_sentiment.config.constants import LOG_FORMAT
 
@@ -65,7 +65,7 @@ def setup_logging(
     logger.info(f"Logging initialized at level: {level}")
 
 
-def get_logger(name: str) -> "logger":
+def get_logger(name: str) -> "Logger":
     """Get a logger instance with the specified name.
 
     This is a convenience function that returns the Loguru logger.
