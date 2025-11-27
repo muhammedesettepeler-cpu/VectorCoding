@@ -2,7 +2,6 @@
 
 import sys
 from pathlib import Path
-from typing import Optional
 
 import click
 from loguru import logger
@@ -56,7 +55,7 @@ def cli(verbose: bool) -> None:
     help="Recreate collection if it exists",
 )
 def ingest(
-    data_path: Optional[Path],
+    data_path: Path | None,
     batch_size: int,
     recreate: bool,
 ) -> None:
@@ -187,8 +186,8 @@ def ingest(
 @click.option("--limit", type=int, default=10, help="Maximum number of results")
 def search(
     query: str,
-    label: Optional[str],
-    score_threshold: Optional[float],
+    label: str | None,
+    score_threshold: float | None,
     limit: int,
 ) -> None:
     """Search for similar vectors using text query.
@@ -242,10 +241,10 @@ def search(
 @click.option("--negative-label", type=str, help="Use examples with this label as negative")
 @click.option("--limit", type=int, default=10, help="Maximum number of results")
 def recommend(
-    positive_ids: Optional[str],
-    negative_ids: Optional[str],
-    positive_label: Optional[str],
-    negative_label: Optional[str],
+    positive_ids: str | None,
+    negative_ids: str | None,
+    positive_label: str | None,
+    negative_label: str | None,
     limit: int,
 ) -> None:
     """Get recommendations based on positive/negative examples.

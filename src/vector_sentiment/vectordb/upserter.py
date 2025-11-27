@@ -65,7 +65,11 @@ class VectorUpserter:
         vectors = {
             embedding_model_name: [
                 arr.tolist()
-                for arr in model.encode(sentences=data, batch_size=batch_size, normalize_embeddings=True)
+                for arr in model.encode(
+                    sentences=data,
+                    batch_size=batch_size,
+                    normalize_embeddings=True,
+                )
             ]
         }
 
@@ -124,7 +128,7 @@ class VectorUpserter:
                 vector=named_vectors,
                 payload=payload,
             )
-            for point_id, payload in zip(ids, payloads)
+            for point_id, payload in zip(ids, payloads, strict=True)
         ]
 
         # Upsert to Qdrant (NOT using add() as per requirements)
@@ -134,7 +138,8 @@ class VectorUpserter:
         )
 
         logger.debug(
-            f"Successfully upserted {batch_size} vectors (IDs {start_id}-{start_id + batch_size - 1})"
+            f"Successfully upserted {batch_size} vectors "
+            f"(IDs {start_id}-{start_id + batch_size - 1})"
         )
 
         return batch_size
@@ -179,7 +184,7 @@ class VectorUpserter:
         logger.info("Starting batch upload from generators")
 
         try:
-            for vectors, payloads in zip(vector_generator, payload_generator):
+            for vectors, payloads in zip(vector_generator, payload_generator, strict=True):
                 count = self.upsert_batch(
                     vectors=vectors,
                     payloads=payloads,

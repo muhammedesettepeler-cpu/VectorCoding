@@ -4,7 +4,7 @@ This module defines all data models used throughout the application,
 providing type safety and validation for inputs and outputs.
 """
 
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -86,15 +86,15 @@ class FilterOptions(BaseModel):
         limit: Maximum number of results to return
     """
 
-    label: Optional[str] = Field(default=None, description="Label filter")
-    score_threshold: Optional[float] = Field(
+    label: str | None = Field(default=None, description="Label filter")
+    score_threshold: float | None = Field(
         default=None, ge=0.0, le=1.0, description="Score threshold"
     )
     limit: int = Field(default=10, ge=1, le=1000, description="Result limit")
 
     @field_validator("label")
     @classmethod
-    def validate_label(cls, v: Optional[str]) -> Optional[str]:
+    def validate_label(cls, v: str | None) -> str | None:
         """Normalize label if provided."""
         return v.lower().strip() if v else None
 
@@ -110,7 +110,7 @@ class SearchQuery(BaseModel):
     """
 
     query_text: str = Field(..., min_length=1, description="Query text")
-    filters: Optional[FilterOptions] = Field(default=None, description="Filter options")
+    filters: FilterOptions | None = Field(default=None, description="Filter options")
 
     @field_validator("query_text")
     @classmethod
@@ -136,7 +136,7 @@ class SearchResult(BaseModel):
     id: int = Field(..., description="Point ID")
     score: float = Field(..., ge=0.0, le=1.0, description="Similarity score")
     label: str = Field(..., description="Sentiment label")
-    text: Optional[str] = Field(default=None, description="Original text")
+    text: str | None = Field(default=None, description="Original text")
 
     def __str__(self) -> str:
         """String representation of search result."""

@@ -4,8 +4,6 @@ This module provides recommendation functionality using positive and negative
 examples to find similar or dissimilar vectors.
 """
 
-from typing import Optional
-
 from loguru import logger
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
@@ -59,10 +57,10 @@ class RecommendationService:
     def recommend(
         self,
         positive_ids: list[int],
-        negative_ids: Optional[list[int]] = None,
-        filter_label: Optional[str] = None,
+        negative_ids: list[int] | None = None,
+        filter_label: str | None = None,
         limit: int = 10,
-        score_threshold: Optional[float] = None,
+        score_threshold: float | None = None,
     ) -> list[SearchResult]:
         """Get recommendations based on positive and negative examples.
 
@@ -143,7 +141,7 @@ class RecommendationService:
     def recommend_by_label(
         self,
         positive_label: str,
-        negative_label: Optional[str] = None,
+        negative_label: str | None = None,
         limit: int = 10,
     ) -> list[SearchResult]:
         """Get example point IDs by label and generate recommendations.

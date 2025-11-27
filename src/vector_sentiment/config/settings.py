@@ -6,7 +6,6 @@ settings. All settings can be configured via environment variables or .env file.
 
 from functools import lru_cache
 from pathlib import Path
-from typing import Optional
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -49,7 +48,7 @@ class QdrantSettings(BaseSettings):
     prefer_grpc: bool = Field(
         default=QDRANT_PREFER_GRPC_DEFAULT, description="Prefer gRPC over HTTP"
     )
-    api_key: Optional[str] = Field(default=None, description="API key for authentication")
+    api_key: str | None = Field(default=None, description="API key for authentication")
     timeout: int = Field(default=QDRANT_TIMEOUT, description="Connection timeout in seconds")
 
     model_config = SettingsConfigDict(env_prefix="QDRANT_", case_sensitive=False)

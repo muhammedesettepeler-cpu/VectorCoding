@@ -4,7 +4,7 @@ This module provides search functionality with support for query filters,
 score thresholds, and named vector queries.
 """
 
-from typing import Any, Optional
+from typing import Any
 
 from loguru import logger
 from qdrant_client import QdrantClient
@@ -64,8 +64,8 @@ class SearchService:
     def search(
         self,
         query_text: str,
-        filter_label: Optional[str] = None,
-        score_threshold: Optional[float] = None,
+        filter_label: str | None = None,
+        score_threshold: float | None = None,
         limit: int = 10,
     ) -> list[SearchResult]:
         """Search for similar vectors using text query.
@@ -186,7 +186,7 @@ class SearchService:
             limit=filters.limit,
         )
 
-    def get_point_by_id(self, point_id: int) -> Optional[dict[str, Any]]:
+    def get_point_by_id(self, point_id: int) -> dict[str, Any] | None:
         """Retrieve a point by its ID.
 
         Args:
