@@ -182,7 +182,7 @@ class RecommendationService:
             with_payload=False,
         )
 
-        positive_ids = [p.id for p in positive_points]
+        positive_ids = [int(p.id) for p in positive_points]  # type: ignore[arg-type]
 
         # Get negative examples if specified
         negative_ids = None
@@ -203,7 +203,7 @@ class RecommendationService:
                 with_payload=False,
             )
 
-            negative_ids = [p.id for p in negative_points]
+            negative_ids = [int(p.id) for p in negative_points]  # type: ignore[arg-type]
 
         logger.info(
             f"Using label-based examples: positive={len(positive_ids)}, "
