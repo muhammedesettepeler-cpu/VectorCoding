@@ -8,7 +8,10 @@ Topics covered:
 - Shard key selectors for horizontal scaling (CRITICAL)
 - Payload indexing for query optimization
 - Batch operations for performance
+
+Note: This file contains long documentation lines which are intentionally ignored.
 """
+# ruff: noqa: E501
 
 
 def quantization_concepts() -> str:
