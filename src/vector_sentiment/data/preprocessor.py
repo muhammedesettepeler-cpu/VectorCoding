@@ -4,8 +4,6 @@ This module provides text preprocessing functions including lowercase conversion
 stopword removal, punctuation removal, and text normalization.
 """
 
-import re
-
 from loguru import logger
 
 from vector_sentiment.config.constants import (

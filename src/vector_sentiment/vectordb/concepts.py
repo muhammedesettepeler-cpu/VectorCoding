@@ -34,15 +34,15 @@ or billions of vectors.
 1. SCALAR QUANTIZATION
    --------------------
    Converts float32 vectors (4 bytes per dimension) to int8 (1 byte per dimension).
-   
+
    Memory Savings: 4x reduction (e.g., 384-dim vector: 1.5KB → 384 bytes)
-   
+
    Accuracy Impact: Minimal (typically <1% reduction in recall@10)
-   
+
    Configuration Example:
    ```python
    from qdrant_client.http import models
-   
+
    client.create_collection(
        collection_name="vectors",
        vectors_config=models.VectorParams(size=384, distance=models.Distance.COSINE),
@@ -55,7 +55,7 @@ or billions of vectors.
        )
    )
    ```
-   
+
    When to Use:
    - Large collections (>1M vectors)
    - Memory-constrained environments
@@ -65,11 +65,11 @@ or billions of vectors.
    ---------------------
    Advanced compression technique that splits vectors into sub-vectors and
    quantizes each separately. Higher compression ratio at cost of more accuracy loss.
-   
+
    Memory Savings: 8x-64x reduction (configurable)
-   
+
    Accuracy Impact: Moderate (5-10% reduction depending on settings)
-   
+
    Configuration Example:
    ```python
    client.create_collection(
@@ -83,7 +83,7 @@ or billions of vectors.
        )
    )
    ```
-   
+
    When to Use:
    - Extremely large collections (>10M vectors)
    - Severe memory constraints
@@ -202,10 +202,10 @@ COMMON USE CASES
 
 1. MULTI-TENANT SaaS APPLICATIONS
    Shard Key: tenant_id or customer_id
-   
+
    Why: Each customer's data is isolated. Searches only touch one shard,
    reducing query time. Easy to comply with data residency requirements.
-   
+
    Example:
    ```python
    payload = {
@@ -217,10 +217,10 @@ COMMON USE CASES
 
 2. GEOGRAPHIC DISTRIBUTION
    Shard Key: country or region
-   
+
    Why: Store EU data in EU nodes, US data in US nodes. Reduces latency
    and ensures GDPR compliance.
-   
+
    Example:
    ```python
    payload = {
@@ -232,10 +232,8 @@ COMMON USE CASES
 
 3. WORKLOAD ISOLATION
    Shard Key: priority or department
-   
    Why: High-priority workloads get dedicated resources. One department's
    heavy usage doesn't impact others.
-   
    Example:
    ```python
    payload = {
@@ -247,10 +245,10 @@ COMMON USE CASES
 
 4. TIME-BASED PARTITIONING
    Shard Key: year_month
-   
+
    Why: Archive old data to cheaper storage. Recent data on fast SSDs.
    Easy to delete old partitions.
-   
+
    Example:
    ```python
    payload = {
@@ -353,7 +351,7 @@ INDEX TYPES
 
 1. KEYWORD INDEX
    For exact string matching (e.g., labels, categories, IDs)
-   
+
    Example:
    ```python
    client.create_payload_index(
@@ -365,7 +363,7 @@ INDEX TYPES
 
 2. INTEGER INDEX
    For numeric fields (e.g., user_id, timestamp)
-   
+
    Example:
    ```python
    client.create_payload_index(

@@ -31,7 +31,7 @@ def demo_filtered_search() -> None:
             vector_name=settings.embedding.model_name,
         )
 
-        query = "Excellent product"
+        query = "Best movie ever"
 
         # Search only in positive reviews
         logger.info(f"\nSearching for '{query}' in POSITIVE reviews:")
@@ -60,8 +60,8 @@ def demo_score_threshold() -> None:
             vector_name=settings.embedding.model_name,
         )
 
-        query = "Good quality"
-        threshold = 0.8
+        query = "Worst acting performance"
+        threshold = 0.6
 
         logger.info(f"\nSearching for '{query}' with threshold >= {threshold}:")
         results = search_service.search(
@@ -90,8 +90,8 @@ def demo_recommendations() -> None:
 
         # Recommend based on labels
         logger.info("\nRecommending based on labels:")
-        logger.info("Positive examples: positive reviews")
-        logger.info("Negative examples: negative reviews")
+        logger.info("Positive examples: positive movie reviews")
+        logger.info("Negative examples: negative movie reviews")
 
         results = recommend_service.recommend_by_label(
             positive_label="positive",

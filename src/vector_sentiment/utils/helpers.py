@@ -30,7 +30,7 @@ def format_score(score: float) -> str:
     return f"{score:.4f}"
 
 
-def safe_dict_get(dictionary: dict[str, Any], key: str, default: Any = None) -> Any:
+def safe_dict_get(dictionary: dict[str, Any], key: str, default: Any = None) -> Any:  # noqa: ANN401
     """Safely get value from dictionary with default.
 
     Args:
