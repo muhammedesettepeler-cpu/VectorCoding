@@ -1,0 +1,9 @@
+# Veri dosyalarını yoksay
+*.parquet
+*.csv
+*.json
+*.pkl
+
+# Geçici dosyalar
+__pycache__/
+*.tmp
