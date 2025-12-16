@@ -1,9 +1,3 @@
-"""Parquet data loader with generator pattern.
-
-This module provides memory-efficient data loading from Parquet files using
-generators to prevent RAM overflow with large datasets.
-"""
-
 from collections.abc import Generator
 from pathlib import Path
 from types import TracebackType
