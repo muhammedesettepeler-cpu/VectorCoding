@@ -4,8 +4,13 @@ This module contains all constant values used throughout the application,
 including default configurations, field names, and preprocessing patterns.
 """
 
+import os
 import re
 from typing import Final
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Collection Configuration
 COLLECTION_NAME_DEFAULT: Final[str] = "sentiment_vectors"
@@ -13,7 +18,7 @@ VECTOR_SIZE_DEFAULT: Final[int] = 384  # all-MiniLM-L6-v2 dimension
 DISTANCE_METRIC: Final[str] = "Cosine"
 
 # Embedding Configuration
-EMBEDDING_MODEL_DEFAULT: Final[str] = "all-MiniLM-L6-v2"
+EMBEDDING_MODEL_DEFAULT: Final[str] = os.getenv("EMBEDDING_MODEL_NAME", "all-MiniLM-L6-v2")
 BATCH_SIZE_DEFAULT: Final[int] = 128
 NORMALIZE_EMBEDDINGS: Final[bool] = True
 
@@ -33,7 +38,9 @@ SEARCH_SCORE_THRESHOLD_DEFAULT: Final[float] = 0.7
 SEARCH_WITH_PAYLOAD: Final[bool] = True
 SEARCH_WITH_VECTORS: Final[bool] = False
 
-# Preprocessing Patterns
+# Preprocessing Patterns (Optional - for use with TextPreprocessor if needed)
+# Note: Preprocessing is no longer part of the core pipeline
+# These patterns are available for manual preprocessing if required
 PUNCTUATION_PATTERN: Final[re.Pattern[str]] = re.compile(r"[^\w\s]")
 MULTIPLE_SPACES_PATTERN: Final[re.Pattern[str]] = re.compile(r"\s+")
 
@@ -85,7 +92,7 @@ QDRANT_HOST_DEFAULT: Final[str] = "localhost"
 QDRANT_PORT_DEFAULT: Final[int] = 6333
 QDRANT_GRPC_PORT_DEFAULT: Final[int] = 6334
 QDRANT_PREFER_GRPC_DEFAULT: Final[bool] = True
-QDRANT_TIMEOUT: Final[int] = 30
+QDRANT_TIMEOUT: Final[int] = 60  # Increased for cloud connections
 
 # Parquet Reading Configuration
 PARQUET_BATCH_SIZE: Final[int] = 256

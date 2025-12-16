@@ -1,0 +1,89 @@
+active_scenario: sentiment_analysis
+
+# Seçenekler:
+# - sentiment_analysis
+# - product_reviews
+# - support_tickets
+# - news_articles
+
+scenarios:
+  sentiment_analysis:
+    name: sentiment_analysis
+    description: Twitter sentiment dataset with positive/negative/neutral labels
+    data_file: sentiment/data.parquet
+
+    # Column mappings
+    text_column: text
+    label_column: label
+    metadata_columns: []
+
+    # Collection settings
+    collection_name: sentiment
+    recreate: false
+
+    # Embedding settings
+    enable_sparse: true
+    batch_size: null # Use global default
+
+  product_reviews:
+    name: product_reviews
+    description: E-commerce product reviews with ratings and customer info
+    data_file: product_reviews/data.parquet
+
+    # Column mappings - FARKLI ŞEMA!
+    text_column: review # 'text' değil, 'review'
+    label_column: rating # String rating (1-5)
+    metadata_columns:
+      - product_name
+      - customer_id
+      - verified_purchase
+
+    # Collection settings
+    collection_name: product_reviews
+    recreate: false
+
+    # Embedding settings
+    enable_sparse: true
+    batch_size: null
+
+  support_tickets:
+    name: support_tickets
+    description: Customer support tickets with priority and status tracking
+    data_file: support_tickets/data.parquet
+
+    # Column mappings - FARKLI ŞEMA!
+    text_column: issue_description # Text = issue description
+    label_column: sentiment # Label = sentiment
+    metadata_columns:
+      - ticket_id
+      - priority
+      - status
+
+    # Collection settings
+    collection_name: support_tickets
+    recreate: false
+
+    # Embedding settings
+    enable_sparse: true
+    batch_size: null
+
+  news_articles:
+    name: news_articles
+    description: News articles from various categories
+    data_file: news_articles/data.parquet
+
+    # Column mappings - FARKLI ŞEMA!
+    text_column: article_text # Ana metin article_text'te
+    label_column: category # Label = category
+    metadata_columns:
+      - headline
+      - published_date
+      - author
+
+    # Collection settings
+    collection_name: news_articles
+    recreate: false
+
+    # Embedding settings
+    enable_sparse: true
+    batch_size: null

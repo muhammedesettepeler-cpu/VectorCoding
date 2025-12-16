@@ -36,10 +36,14 @@ class QdrantClientWrapper:
         self.settings = settings
         self._client: QdrantClient | None = None
 
-        logger.info(
-            f"Initializing Qdrant client: host={settings.host}, "
-            f"port={settings.port}, prefer_grpc={settings.prefer_grpc}"
-        )
+        # Log connection info
+        if settings.url:
+            logger.info(f"Initializing Qdrant client with URL: {settings.url}")
+        else:
+            logger.info(
+                f"Initializing Qdrant client: host={settings.host}, "
+                f"port={settings.port}, prefer_grpc={settings.prefer_grpc}"
+            )
 
     @property
     def client(self) -> QdrantClient:
@@ -49,15 +53,25 @@ class QdrantClientWrapper:
             QdrantClient instance
         """
         if self._client is None:
-            self._client = QdrantClient(
-                host=self.settings.host,
-                port=self.settings.port,
-                grpc_port=self.settings.grpc_port,
-                prefer_grpc=self.settings.prefer_grpc,
-                api_key=self.settings.api_key,
-                timeout=self.settings.timeout,
-            )
-            logger.info("Qdrant client connection established")
+            # Prefer URL if provided (for Qdrant Cloud)
+            if self.settings.url:
+                self._client = QdrantClient(
+                    url=self.settings.url,
+                    api_key=self.settings.api_key,
+                    timeout=self.settings.timeout,
+                )
+                logger.info("Qdrant client connection established (URL mode)")
+            else:
+                # Fall back to host/port (for local/self-hosted)
+                self._client = QdrantClient(
+                    host=self.settings.host,
+                    port=self.settings.port,
+                    grpc_port=self.settings.grpc_port,
+                    prefer_grpc=self.settings.prefer_grpc,
+                    api_key=self.settings.api_key,
+                    timeout=self.settings.timeout,
+                )
+                logger.info("Qdrant client connection established (host/port mode)")
 
         return self._client
 
@@ -73,7 +87,8 @@ class QdrantClientWrapper:
             ...     print("Qdrant is healthy")
         """
         try:
-            # Try to get collections as a health check
+            # For cloud connections, try a simple operation first
+            logger.info("Performing Qdrant health check...")
             self.client.get_collections()
             logger.info("Qdrant health check passed")
             return True

@@ -24,14 +24,17 @@ classifiers = [
 dependencies = [
     "qdrant-client>=1.7.0",
     "sentence-transformers>=2.2.2",
+    "fastembed>=0.2.0",  # Sparse vector embeddings (SPLADE)
     "pydantic>=2.5.0",
     "pydantic-settings>=2.1.0",
     "loguru>=0.7.2",
     "pandas>=2.1.0",
     "pyarrow>=14.0.0",
-    "click>=8.1.7",
     "python-dotenv>=1.0.0",
     "numpy>=1.24.0",
+    "scikit-learn>=1.3.0",  # K-means clustering & metrics
+    "pyyaml>=6.0",  # YAML config file parsing
+    "faker>=20.0.0",  # Synthetic data generation
 ]
 
 [project.optional-dependencies]
@@ -43,9 +46,6 @@ dev = [
     "types-requests>=2.31.0",
     "pandas-stubs>=2.1.0",
 ]
-
-[project.scripts]
-vector-sentiment = "vector_sentiment.cli.app:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

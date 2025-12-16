@@ -1,336 +1,165 @@
-# Vector Sentiment Search
+# 🚀 Vectora: Scenario-Driven Vector Search Engine
 
-A production-ready Qdrant vector database implementation for sentiment analysis with advanced features including Pydantic validation, modular architecture, and comprehensive search capabilities.
+Vectora is a production-ready, configurable **Vector Search & Sentiment Analysis** system built on **Qdrant** and **Sentence Transformers**. It adopts a **Scenario-Driven Architecture**, allowing you to switch between use cases (e.g., Sentiment Analysis, Product Reviews, Support Tickets) instantly via a central configuration file.
 
-## Features
+![Python](https://img.shields.io/badge/Python-3.11+-blue.svg) ![Qdrant](https://img.shields.io/badge/Qdrant-Vector_DB-red.svg) ![License](https://img.shields.io/badge/license-MIT-green)
 
-- Memory-efficient Parquet data loading with generator pattern
-- Text preprocessing pipeline (stopwords, punctuation, normalization)
-- SentenceTransformer embeddings with named vector format
-- Qdrant vector database integration with collection management
-- Advanced search with filters, score thresholds, and recommendations
-- Pydantic validation for type safety
-- Comprehensive logging with Loguru
-- CLI interface for operations
-- Production-ready architecture
+---
 
-## Requirements
+## 🌟 Key Features
 
-- Python 3.11.8 or higher
-- Docker and Docker Compose (for Qdrant)
+*   **⚡ Scenario-Driven Design**: Switch entire datasets and logic by changing a single line in `master_config.yaml`.
+*   **🔍 Hybrid Search**: Combines **Dense Vectors** (Semantic similarity) and **Sparse Vectors (SPLADE)** (Keyword matching) for superior retrieval accuracy.
+*   **🛡️ Robust & Type-Safe**: Fully typed with **Pydantic** for configuration validation and **Mypy** strict typing.
+*   **🚀 Production Ready**: Features generator-based memory-efficient data loading, batched processing, and rigorous error handling.
+*   **📊 Comprehensive Analytics**: Built-in tools to analyze vector distributions, calculate statistics, and visualize data health.
+*   **🐳 Containerized**: One-command setup with Docker Compose.
 
-## Installation
+---
 
-### 1. Clone the repository
+## 🛠️ Installation
 
+### 1. Clone & Setup
 ```bash
 git clone <repository-url>
-cd model_assingnment
-```
+cd vectora
 
-### 2. Create virtual environment
-
-```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-### 3. Install dependencies
-
-```bash
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -e .
 ```
 
-For development:
-```bash
-pip install -e ".[dev]"
-```
-
-### 4. Setup Qdrant with Docker
-
+### 2. Start Vector Database
+Start a local Qdrant instance using Docker:
 ```bash
 docker-compose up -d
 ```
+*Verify running at: `http://localhost:6333`*
 
-Verify Qdrant is running:
-```bash
-curl http://localhost:6333/healthz
-```
-
-### 5. Configure environment
-
+### 3. Environment Configuration
+Create your `.env` file from the template:
 ```bash
 cp .env.example .env
 ```
+*No changes usually needed for local development.*
 
-Edit `.env` to customize settings if needed.
+---
 
-## Usage
+## ⚙️ Configuration (The Core)
 
-### CLI Commands
+This project uses a **Centralized Configuration** approach. Control everything from `data_dir/master_config.yaml`.
 
-#### Check status
+**Example `master_config.yaml`:**
+```yaml
+# 🎯 ACTIVE SCENARIO: Change this to switch contexts!
+active_scenario: sentiment_analysis 
 
-```bash
-vector-sentiment status
-```
-
-#### Ingest data
-
-```bash
-vector-sentiment ingest --data-path data/sentiment.parquet --batch-size 128
-```
-
-Options:
-- `--data-path`: Path to parquet file (default from config)
-- `--batch-size`: Processing batch size (default: 128)
-- `--recreate`: Recreate collection if exists
-
-#### Search for similar vectors
-
-```bash
-# Basic search
-vector-sentiment search "Great product quality" --limit 10
-
-# Search with label filter
-vector-sentiment search "Amazing experience" --label positive --limit 5
-
-# Search with score threshold
-vector-sentiment search "Good quality" --score-threshold 0.8 --limit 10
-```
-
-#### Get recommendations
-
-```bash
-# Recommend using point IDs
-vector-sentiment recommend --positive-ids "1,2,3" --negative-ids "10,11" --limit 5
-
-# Recommend using labels
-vector-sentiment recommend --positive-label positive --negative-label negative --limit 10
-```
-
-### Programmatic Usage
-
-```python
-from pathlib import Path
-from vector_sentiment.config.settings import get_settings
-from vector_sentiment.embeddings.service import EmbeddingService
-from vector_sentiment.vectordb.client import QdrantClientWrapper
-from vector_sentiment.search.searcher import SearchService
-
-# Load settings
-settings = get_settings()
-
-# Initialize services
-embedding_service = EmbeddingService(settings.embedding.model_name)
-
-with QdrantClientWrapper(settings.qdrant) as qdrant:
-    search_service = SearchService(
-        client=qdrant.client,
-        collection_name=settings.collection.name,
-        embedding_service=embedding_service,
-        vector_name=settings.embedding.model_name,
-    )
+scenarios:
+  sentiment_analysis:
+    name: "Sentiment Analysis"
+    description: "Twitter sentiment dataset"
+    data_file: "sentiment/data.parquet"
     
-    # Search
-    results = search_service.search(
-        query_text="Excellent product!",
-        filter_label="positive",
-        limit=10,
-    )
+    # Map your data columns to internal schema
+    text_column: "text"
+    label_column: "label"
     
-    for result in results:
-        print(f"Score: {result.score:.4f}, Label: {result.label}")
+    # Vector Search Settings
+    collection_name: "sentiment_collection"
+    enable_sparse: true  # Enable Hybrid Search
+    
+  product_reviews:
+    name: "Product Reviews"
+    data_file: "reviews/data.parquet"
+    text_column: "review_body" # Flexible column mapping
+    label_column: "star_rating"
 ```
 
-## Project Structure
+---
 
-```
-vector-sentiment-search/
-├── pyproject.toml          # Project configuration and dependencies
-├── docker-compose.yml      # Qdrant service configuration
-├── .env.example            # Environment variables template
-├── README.md               # This file
-├── src/vector_sentiment/
-│   ├── config/             # Configuration management
-│   │   ├── settings.py     # Pydantic settings
-│   │   └── constants.py    # Application constants
-│   ├── models/             # Pydantic data models
-│   │   └── schemas.py      # Validation schemas
-│   ├── data/               # Data processing
-│   │   ├── loader.py       # Parquet loader with generators
-│   │   ├── preprocessor.py # Text preprocessing
-│   │   └── validator.py    # Data validation
-│   ├── vectordb/           # Qdrant operations
-│   │   ├── client.py       # Client wrapper
-│   │   ├── collection.py   # Collection management
-│   │   ├── upserter.py     # Vector upload
-│   │   └── concepts.py     # Advanced concepts documentation
-│   ├── embeddings/         # Embedding generation
-│   │   └── service.py      # SentenceTransformer wrapper
-│   ├── search/             # Search operations
-│   │   ├── searcher.py     # Vector search
-│   │   └── recommender.py  # Recommendations
-│   ├── utils/              # Utilities
-│   │   ├── logger.py       # Logging setup
-│   │   └── helpers.py      # Helper functions
-│   └── cli/                # Command-line interface
-│       └── app.py          # CLI commands
-├── data/                   # Data directory
-├── logs/                   # Log files
-└── examples/               # Example scripts
-```
+## 🎬 Scenarios & Usage
 
-## Advanced Qdrant Concepts
+All scripts automatically read the `active_scenario` from `master_config.yaml`. You don't need to pass arguments every time.
 
-This project demonstrates understanding of advanced Qdrant features:
-
-### Quantization
-Memory optimization through vector compression. See [src/vector_sentiment/vectordb/concepts.py](file:///home/esettepeler/Desktop/model_assingnment/src/vector_sentiment/vectordb/concepts.py) for detailed documentation on:
-- Scalar quantization (4x memory reduction)
-- Product quantization (8x-64x reduction)
-- Trade-offs and use cases
-
-### Shard Key Selectors
-Critical for production deployments with horizontal scaling. Detailed documentation covers:
-- Multi-tenant data isolation
-- Geographic distribution
-- Workload isolation patterns
-- Production architecture examples
-
-### Payload Indexing
-Query performance optimization through metadata indexing on frequently filtered fields.
-
-### Batch Operations
-Improved throughput with batch search and recommend operations.
-
-View full documentation:
+### 1. 📥 Ingestion (Load Data)
+Reads your Parquet file, generates Dense & Sparse embeddings, and indexes them in Qdrant.
 ```bash
-python -m vector_sentiment.vectordb.concepts
+python scenarios/ingest.py
+# Optional: --recreate to force fresh start
 ```
 
-## Data Preparation
+### 2. 🔎 Search (Semantic & Hybrid)
+Perform semantic searches on your indexed data.
+```bash
+# Standard Semantic Search
+python scenarios/search.py --query "Unresponsive customer service"
 
-### Download Dataset
-
-Example using HuggingFace datasets:
-
-```python
-from datasets import load_dataset
-import pandas as pd
-
-# Load sentiment dataset
-dataset = load_dataset("sentiment140", split="train[:10000]")
-
-# Convert to pandas and save as parquet
-df = pd.DataFrame(dataset)
-df = df.rename(columns={"text": "text", "sentiment": "label"})
-df.to_parquet("data/sentiment.parquet")
+# ⚡ Hybrid Search (Dense + Keyword match)
+python scenarios/search.py --query "Error code 503" --hybrid
 ```
 
-### Data Format
+### 3. 💡 Recommendations
+Find similar items or generate recommendations based on positive/negative examples.
+```bash
+# Recommend content similar to positive examples
+python scenarios/recommend.py --positive-ids "10, 25, 42"
 
-Expected parquet columns:
-- `text` or `sentence`: Text content
-- `label`: Sentiment label (positive/negative/neutral or 0/1/2)
+# Filtered recommendation
+python scenarios/recommend.py --positive-label "positive" --limit 5
+```
 
-## Development
+### 4. 📈 Analytics
+Inspect your collection health, label distribution, and vector statistics.
+```bash
+python scenarios/analytics.py
+```
 
-### Code Quality
+---
 
-Run linting:
+## 🏗️ Project Structure
+
+```
+vectora/
+├── data_dir/                  # 📂 CENTRAL DATA & CONFIG
+│   ├── master_config.yaml     # 🧠 The Brain: All scenarios defined here
+│   ├── sentiment/             # Dataset folder
+│   │   └── data.parquet       # Actual data file
+│   └── product_reviews/       # Another dataset...
+│
+├── scenarios/                 # 🎬 EXECUTABLE SCRIPTS
+│   ├── ingest.py              # Data ETL & Indexing
+│   ├── search.py              # Search Interface
+│   ├── recommend.py           # Recommendation Engine
+│   └── analytics.py           # Analysis Tools
+│
+├── src/vector_sentiment/      # 🧠 CORE LIBRARY
+│   ├── config/                # Pydantic Settings
+│   ├── embeddings/            # Dense (BGE) & Sparse (SPLADE) Models
+│   ├── vectordb/              # Qdrant Operations Module
+│   └── ...
+└── ...
+```
+
+---
+
+## 🧩 Advanced Concepts Used
+
+*   **Named Vector Format**: Compliant with generic vector inputs for flexibility.
+*   **Hybrid Search**: Using `BGE-Small` (Dense) + `SPLADE` (Sparse) for optimal retrieval.
+*   **Generator Pattern**: Efficiently processes massive datasets without memory spikes.
+*   **Modular Design**: Separation of concerns between Logic (`src`), Configuration (`yaml`), and Execution (`scenarios`).
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please run linting before submitting PRs:
 ```bash
 ruff check .
-ruff format .
+black .
+mypy .
 ```
 
-Run type checking:
-```bash
-mypy src/
+---
 
-```
-
-### Testing
-
-```bash
-pytest
-```
-
-## Configuration
-
-Key environment variables in `.env`:
-
-```bash
-# Qdrant
-QDRANT_HOST=localhost
-QDRANT_PORT=6333
-QDRANT_PREFER_GRPC=true
-
-# Embedding
-EMBEDDING_MODEL_NAME=all-MiniLM-L6-v2
-EMBEDDING_BATCH_SIZE=128
-
-# Collection
-COLLECTION_NAME=sentiment_vectors
-VECTOR_SIZE=384
-
-# Search
-SEARCH_DEFAULT_LIMIT=10
-SEARCH_SCORE_THRESHOLD=0.7
-```
-
-## Architecture Decisions
-
-### Named Vector Format
-Implements the exact format specified in project requirements:
-```python
-vectors = {
-    embedding_model_name: [
-        arr.tolist()
-        for arr in model.encode(sentences=data, batch_size=batch_size, normalize_embeddings=True)
-    ]
-}
-```
-
-### Generator Pattern
-Uses `pyarrow.parquet.ParquetFile.iter_batches()` for memory-efficient data loading, preventing RAM overflow with large datasets.
-
-### Upsert vs Add
-Uses `client.upsert()` instead of `client.add()` as per project requirements for proper vector insertion.
-
-###  Pydantic Validation
-All data flows validated with Pydantic models ensuring type safety and data quality.
-
-## Troubleshooting
-
-### Qdrant Connection Failed
-```bash
-# Check if Qdrant is running
-docker-compose ps
-
-# View logs
-docker-compose logs qdrant
-
-# Restart if needed
-docker-compose restart qdrant
-```
-
-### Memory Issues During Ingestion
-Reduce batch size:
-```bash
-vector-sentiment ingest --batch-size 64
-```
-
-### Import Errors
-Ensure package is installed in editable mode:
-```bash
-pip install -e .
-```
-
-## License
-
-MIT
-
-## Contact
-
-For questions or issues, please open an issue in the repository.
+**Built with 💙 by Advanced Agentic Coding Team**

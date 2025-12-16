@@ -10,16 +10,6 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class SentimentRecord(BaseModel):
-    """Sentiment data record from dataset.
-
-    Represents a single sentiment analysis record with text and label.
-    The text field can be named 'text' or 'sentence' in the source data.
-
-    Attributes:
-        text: The text content for sentiment analysis
-        label: Sentiment label (positive, negative, neutral)
-    """
-
     text: str = Field(..., min_length=1, description="Text content")
     label: str = Field(..., min_length=1, description="Sentiment label")
 
@@ -51,16 +41,6 @@ class SentimentRecord(BaseModel):
 
 
 class VectorPoint(BaseModel):
-    """Vector point to be stored in Qdrant.
-
-    Represents a vector embedding with its associated metadata payload.
-
-    Attributes:
-        id: Unique identifier for the vector point
-        vector: The embedding vector as list of floats
-        payload: Metadata associated with the vector (e.g., label, original text)
-    """
-
     id: int = Field(..., ge=0, description="Point ID")
     vector: list[float] = Field(..., min_length=1, description="Embedding vector")
     payload: dict[str, Any] = Field(default_factory=dict, description="Metadata payload")
@@ -75,16 +55,6 @@ class VectorPoint(BaseModel):
 
 
 class FilterOptions(BaseModel):
-    """Filter options for search queries.
-
-    Defines filtering criteria for vector search operations.
-
-    Attributes:
-        label: Optional label to filter by (e.g., 'positive', 'negative')
-        score_threshold: Minimum similarity score threshold
-        limit: Maximum number of results to return
-    """
-
     label: str | None = Field(default=None, description="Label filter")
     score_threshold: float | None = Field(
         default=None, ge=0.0, le=1.0, description="Score threshold"
@@ -99,15 +69,6 @@ class FilterOptions(BaseModel):
 
 
 class SearchQuery(BaseModel):
-    """Search query model.
-
-    Represents a search query with text and optional filters.
-
-    Attributes:
-        query_text: Text to search for
-        filters: Optional filter criteria
-    """
-
     query_text: str = Field(..., min_length=1, description="Query text")
     filters: FilterOptions | None = Field(default=None, description="Filter options")
 
@@ -121,17 +82,6 @@ class SearchQuery(BaseModel):
 
 
 class SearchResult(BaseModel):
-    """Search result model.
-
-    Represents a single search result with score and metadata.
-
-    Attributes:
-        id: Point ID from Qdrant
-        score: Similarity score
-        label: Sentiment label from payload
-        text: Original text from payload (if available)
-    """
-
     id: int = Field(..., description="Point ID")
     score: float = Field(..., ge=0.0, le=1.0, description="Similarity score")
     label: str = Field(..., description="Sentiment label")
